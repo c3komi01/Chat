@@ -1,50 +1,149 @@
-# Welcome to your Expo app 👋
+# Firebase Chat Application (React Native + Expo)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Yleiskuvaus
 
-## Get started
+Tämä projekti on React Native ‑pohjainen mobiilisovellus, joka käyttää **Firebasea** reaaliaikaiseen viestintään. Sovellus on rakennettu **Expo**‑ympäristössä ja se muistuttaa yksinkertaistettua WhatsApp‑tyyppistä chat‑sovellusta opetuskäyttöön.
 
-1. Install dependencies
+Sovelluksen päätavoitteena on demonstroida Firebase‑toiminnallisuuksia käytännössä:
 
-   ```bash
-   npm install
-   ```
+* käyttäjien tunnistautuminen
+* tietojen lisääminen, hakeminen ja poistaminen
+* reaaliaikainen synkronointi useiden käyttäjien välillä
 
-2. Start the app
+Projekti on toteutettu Oulu University of Applied Sciences (OAMK) React Native ‑kurssin harjoitustyönä.
 
-   ```bash
-   npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+## Käytetyt teknologiat
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+* React Native
+* Expo
+* Firebase Firestore (reaaliaikainen tietokanta)
+* Firebase Authentication (Email/Password)
+* Expo Router
+* TypeScript
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+---
 
-## Get a fresh project
+## Sovelluksen ominaisuudet
 
-When you're ready, run:
+### 1. Käyttäjän tunnistautuminen
 
-```bash
-npm run reset-project
+* Kirjautuminen Firebase Authenticationin avulla (Email/Password)
+* Käyttäjän sessio säilyy sovelluksen uudelleenkäynnistyksen jälkeen (AsyncStorage)
+* Logout‑toiminto
+
+### 2. Chat‑huoneet (Rooms)
+
+Sovellus tukee useita chat‑huoneita:
+
+* General
+* Family
+* Friends
+
+Jokaisella huoneella on oma viestikokoelmansa Firestoressa.
+
+Firestore‑rakenne:
+
+```
+rooms
+ └── roomId
+      └── messages
+           └── messageId
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 3. Viestien lähettäminen (Adding data)
 
-## Learn more
+* Käyttäjät voivat lähettää viestejä valittuun huoneeseen
+* Jokainen viesti sisältää:
 
-To learn more about developing your project with Expo, look at the following resources:
+  * tekstin
+  * lähettäjän sähköpostin
+  * palvelimen aikaleiman (serverTimestamp)
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### 4. Viestien hakeminen (Retrieving data)
 
-## Join the community
+* Viestit haetaan reaaliaikaisesti Firestoresta
+* onSnapshot‑kuuntelija päivittää käyttöliittymän automaattisesti
+* Viestit järjestetään lähetysajan mukaan
 
-Join our community of developers creating universal apps.
+### 5. Viestien poistaminen (Deleting data)
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+* Käyttäjä voi poistaa viestejä
+* deleteDoc‑toiminto poistaa viestin Firestoresta
+* UI päivittyy automaattisesti reaaliaikaisen kuuntelun ansiosta
+
+### 6. WhatsApp‑tyylinen käyttöliittymä
+
+* Omat viestit näkyvät oikealla
+* Muiden käyttäjien viestit näkyvät vasemmalla
+* Viestien yhteydessä näytetään:
+
+  * käyttäjän sähköposti
+  * lähetysaika
+
+---
+
+## Monen käyttäjän tuki
+
+Sovellus tukee useita käyttäjiä samanaikaisesti:
+
+* Useat käyttäjät voivat kirjautua eri laitteilla
+* Kun käyttäjät ovat samassa chat‑huoneessa, viestit synkronoituvat reaaliajassa
+* Testaus on tehty useilla laitteilla Expo Go ‑sovelluksen avulla
+
+---
+
+## Firestore‑turvasäännöt (kehitysvaihe)
+
+Kehitystä ja testausta varten käytettiin yksinkertaistettuja sääntöjä:
+
+```js
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /rooms/{roomId}/messages/{messageId} {
+      allow read, write: if true;
+    }
+  }
+}
+
+
+
+
+
+
+## Sovelluksen käynnistäminen
+
+1. Asenna riippuvuudet:
+
+```bash
+npm install
+```
+
+2. Käynnistä projekti:
+
+```bash
+npx expo start
+```
+
+3. Avaa sovellus:
+
+* Expo Go (Android / iOS)
+* Web‑selain (kehitystarkoituksiin)
+
+---
+
+## Projektin tarkoitus
+
+Tämän projektin tarkoituksena on:
+
+* oppia Firebase Firestore‑tietokannan käyttöä
+* ymmärtää reaaliaikaisten sovellusten toimintaperiaatteet
+* harjoitella React Native ‑kehitystä käytännön esimerkin kautta
+
+Projekti toimii hyvänä pohjana laajemmille mobiilisovelluksille, kuten yksityisille chateille, käyttäjälistoille ja paremmalle tietoturvalle.
+
+---
+
+
