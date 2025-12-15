@@ -25,7 +25,7 @@ export default function Login({ setLoggedIn, setUserEmail }: LoginProps) {
       setUserEmail(user.email ?? email.trim());
       setLoggedIn(true);
     } catch (error: any) {
-      // Покажем понятную ошибку пользователю
+      
       if (error.code === "auth/user-not-found") {
         Alert.alert("Login failed", "No account found with this email.");
       } else if (error.code === "auth/wrong-password") {
